@@ -8,12 +8,6 @@ class ShortenedUrl < ActiveRecord::Base
     :primary_key => :id
   )
 
-  def initialize(options = {})
-    @submitter_id = options[:submitter_id]
-    @long_url = options[:long_url]
-    @short_url = options[:short_url]
-  end
-
   def self.random_code
     code = SecureRandom.urlsafe_base64
     self.exists?(short_url: code) ? self.random_code : code
