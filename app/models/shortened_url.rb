@@ -1,5 +1,7 @@
 
 class ShortenedUrl < ActiveRecord::Base
+  validates :submitter_id, :long_url, :presence => true
+  validates :short_url, :presence => true, :uniqueness => true
 
   belongs_to(
     :submitter,
@@ -7,6 +9,15 @@ class ShortenedUrl < ActiveRecord::Base
     :foreign_key => :submitter_id,
     :primary_key => :id
   )
+
+  has_many(
+    :visits,
+    :class_name => "Visit",
+    :foreign_key => :short_url_id,
+    :primary_key => :id
+  )
+
+  has_many :visitors, :through => :visits, :source => :visitor
 
   def self.random_code
     code = SecureRandom.urlsafe_base64
