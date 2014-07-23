@@ -1,0 +1,39 @@
+require 'launchy'
+
+def get_email
+  puts "Input your email"
+  gets.chomp
+end
+
+def get_command
+  puts <<-PROMPT
+  What do you want to do?
+  0. Create shortened URL
+  1. Visit shortened URL
+  PROMPT
+  gets.chomp
+end
+
+user = nil
+until user
+  str = get_email
+  user = User.where(email: str).first if User.exists?(email: str)
+end
+
+
+command = ''
+until ['0', '1'].include?(command)
+  command = get_command
+end
+
+case command
+when '0'
+  puts "Type in the long URL"
+  short = ShortenedUrl.create_for_user_and_long_url(user, gets.chomp)
+  puts "The short URL is: #{short.short_url}."
+when '1'
+  puts "Type in the shortened URL"
+  Launchy.open( ShortenedUrl.where(short_url: gets.chomp).first.long_url )
+end
+
+
